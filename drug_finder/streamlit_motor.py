@@ -19,7 +19,6 @@ class Motor:
         if 'comp_buttons' not in st.session_state:
             st.session_state.comp_buttons = {}
             st.session_state.comp_buttons_deployed = True
-        
 
     def welcome(self):
         st.title('\nWELCOME TO DRUG FINDER')
@@ -41,23 +40,28 @@ class Motor:
         if medicine:
             st.write(f'**:blue[MEDICINE: ] {medicine}**')
             __search_term = self.__searcher.find_medicines(medicine)
-            __func = self.__searcher.find_medicines
             __posting = False
-            self.__display_medicines(__search_term, __posting)
+            __response_dic = self.__display_medicines(__search_term, __posting)
+        try:
+            self.__handler.download_as_csv(__search_term, __response_dic)
+        except:
+            pass
         if compound:
             st.write(f'**:blue[COMPOUND: ] {compound}**')
             __search_term = self.__searcher.find_principles(compound)
-            __func = self.__searcher.find_principles
             __posting = False
-            self.__display_medicines(__search_term, __posting)
+            __response_dic = self.__display_medicines(__search_term, __posting)
+        try:
+            self.__handler.download_as_csv(__search_term, __response_dic)
+        except:
+            pass
         if indication:
             st.write(f'**:blue[INDICATION: ] {indication}**')
             __search_term = self.__searcher.find_therapeutic_indication(indication)
-            __func = self.__searcher.find_therapeutic_indication
             __posting = True
-            self.__display_medicines(__search_term, __posting)
+            __response_dic = self.__display_medicines(__search_term, __posting)
         try:
-            self.__handler.download_as_csv(self.__searcher.nombre,self.__searcher.response_dict)
+            self.__handler.download_as_csv(__search_term, __response_dic)
         except:
             pass
 
@@ -82,10 +86,11 @@ class Motor:
 
     def __display_medicines(self, query, post):
         self.__check_length(query)
-        self.__searcher.search_motor(post)    
-        return self.__print_med_list(self.__searcher.response_dict, query)
+        response_dic = self.__searcher.search_motor(post)    
+        self.__print_med_list(response_dic) 
+        return response_dic
 
-    def __print_med_list(self, response, query):
+    def __print_med_list(self, response):
         if response == {}:
             st.write('\nNo results to show, please repeat your search')
             st.write('Check your spelling and remember that the database is in Spanish\n')
@@ -105,7 +110,7 @@ class Motor:
                             self.__searcher.find_medicines(__med['nombre'])
                             self.__searcher.search_motor(False) 
                             self.__display_compounds_info(__med['nregistro'])
-                    st.session_state.med_buttons_deployed = True      
+                    st.session_state.med_buttons_deployed = True     
             return __number_medicines
         
     def __display_compounds_info(self, nregistro):

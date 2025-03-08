@@ -54,4 +54,5 @@ class Search:
                 __running = False         
             else:
                 self.response_dict[f"pagina_{__params['pagina']}"] = self.__response.json()
+        return self.response_dict
 
