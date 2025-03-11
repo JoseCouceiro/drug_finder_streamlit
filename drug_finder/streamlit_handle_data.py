@@ -40,7 +40,7 @@ class HandleData():
             
 
             st.download_button(
-                                label="Download drug prospect as PDF",
+                                label="Download drug prospectus as PDF",
                                 data=pdf_bytes,
                                 file_name=f"{__name}.pdf",
                                 mime="application/pdf"
